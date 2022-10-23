@@ -31,11 +31,12 @@ contract HeadProfile {
         string email
     );
 
-    function createProfile(ProfileInfo memory _profile) public {
+    function createProfile(ProfileInfo memory _profile) public returns (uint256) {
         _userIdCounter.increment();
         _profile.userId = _userIdCounter.current();
         users[msg.sender] = _profile;
 
         emit ProfileCreated(_profile.userId, _profile.userType, _profile.displayName, _profile.email);
+        return _profile.userId;
     }
 }
