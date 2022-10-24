@@ -4,20 +4,31 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { HeadProfile } from "../typechain-types";
 
-describe("HeadProfile", function() {
+describe("HeadProfile", function () {
   let contract: HeadProfile;
 
-  this.beforeEach(async()=>{
+  this.beforeEach(async () => {
     const HeadProfile = await ethers.getContractFactory("HeadProfile");
     contract = await HeadProfile.deploy();
   });
 
-  describe("AddProfile", ()=>{
+  describe("AddProfile", () => {
     it("should return 1 for first user", async function () {
-        await contract.deployed();
-        const [owner] = await ethers.getSigners();
-        const profle = [0, 1, owner, 'Bevis Lin', 'bevis.tw@gmail.com', false, 0];
-        
-    })
+      await contract.deployed();
+      const [owner] = await ethers.getSigners();
+      const profile = {
+        userId: 0,
+        userType: 1,
+        userAddress: owner.address,
+        displayName: "Bevis Lin",
+        email: "bevis.tw@gmail.com",
+        isEmailVerified: false,
+        lastUpdate: "1655445559",
+      };
+      console.log(profile);
+      await expect(contract.createProfile(profile))
+        .to.emit(contract, "ProfileCreated")
+        .withArgs(1, 1, "Bevis Lin", "bevis.tw@gmail.com");
+    });
   });
 });
