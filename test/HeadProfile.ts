@@ -12,8 +12,8 @@ describe("HeadProfile", function () {
     contract = await HeadProfile.deploy();
   });
 
-  describe("AddProfile", () => {
-    it("should return 1 for first user", async function () {
+  describe("Profile Creation", () => {
+    it("Should get event with args user id = 1", async function () {
       await contract.deployed();
       const [owner] = await ethers.getSigners();
       const profile = {
@@ -30,5 +30,13 @@ describe("HeadProfile", function () {
         .to.emit(contract, "ProfileCreated")
         .withArgs(1, 1, "Bevis Lin", "bevis.tw@gmail.com");
     });
+
+    it("Should be able to get profile by address", async function () {
+      //await contract.deployed();
+      const [owner] = await ethers.getSigners();
+      const userProfile = await contract.getProfileByAddress(owner.address);
+      console.log(userProfile);
+      expect(userProfile.userId.toNumber()).to.be.equal(1);
+    })
   });
 });

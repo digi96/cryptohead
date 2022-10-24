@@ -34,9 +34,17 @@ contract HeadProfile {
     function createProfile(ProfileInfo memory _profile) public returns (uint256) {
         _userIdCounter.increment();
         _profile.userId = _userIdCounter.current();
+        _profile.lastUpdate = block.timestamp;
         users[msg.sender] = _profile;
+
 
         emit ProfileCreated(_profile.userId, _profile.userType, _profile.displayName, _profile.email);
         return _profile.userId;
     }
+
+    function getProfileByAddress(address _address) public view returns (uint256 userId, HeadType headType, 
+        string memory displayName,string memory email, bool isEmailVerified) {
+            ProfileInfo memory user = users[_address];
+            return (user.userId, user.userType, user.displayName, user.email, user.isEmailVerified);
+        }
 }
