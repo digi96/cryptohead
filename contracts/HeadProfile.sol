@@ -20,6 +20,7 @@ contract HeadProfile {
         string email;
         bool isEmailVerified;
         uint256 lastUpdate;
+        uint emailVerifyNumber;
     }
 
     mapping(address => ProfileInfo) private users;
@@ -31,20 +32,49 @@ contract HeadProfile {
         string email
     );
 
-    function createProfile(ProfileInfo memory _profile) public returns (uint256) {
+    function getSixDigitRandom() public view returns (uint) {
+        return (block.timestamp + block.difficulty) % 1000000;
+    }
+
+    function createProfile(ProfileInfo memory _profile)
+        public
+        returns (uint256)
+    {
         _userIdCounter.increment();
         _profile.userId = _userIdCounter.current();
         _profile.lastUpdate = block.timestamp;
         users[msg.sender] = _profile;
 
-
-        emit ProfileCreated(_profile.userId, _profile.userType, _profile.displayName, _profile.email);
+        emit ProfileCreated(
+            _profile.userId,
+            _profile.userType,
+            _profile.displayName,
+            _profile.email
+        );
         return _profile.userId;
     }
 
-    function getProfileByAddress(address _address) public view returns (uint256 userId, HeadType headType, 
-        string memory displayName,string memory email, bool isEmailVerified) {
-            ProfileInfo memory user = users[_address];
-            return (user.userId, user.userType, user.displayName, user.email, user.isEmailVerified);
+    function getProfileByAddress(address _address)
+        public
+        view
+        returns (
+            uint256 userId,
+            HeadType headType,
+            string memory displayName,
+            string memory email,
+            bool isEmailVerified
+        )
+    {
+        ProfileInfo memory user = users[_address];
+        if (user.userId == 0) {
+            revert("Profile not exist");
         }
+        return (
+            user.userId,
+            user.userType,
+            user.displayName,
+            user.email,
+            user.isEmailVerified
+        );
+    }
 }
