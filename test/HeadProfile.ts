@@ -44,7 +44,7 @@ describe("HeadProfile", function () {
       };
       //console.log(profile);
       await contract.createProfile(profile);
-      const userProfile = await contract.getProfileByAddress(owner.address);
+      const userProfile = await contract.getProfileInfoByAddress(owner.address);
       //console.log(userProfile);
       expect(userProfile.userId.toNumber()).to.be.equal(1);
     });
@@ -55,5 +55,24 @@ describe("HeadProfile", function () {
       //console.log("randomNumber:", radomNumber);
       expect(radomNumber.toString().length).length.to.be.equal(6);
     });
+
+    it("Should be able to request email verification", async function () {
+      const { contract, owner } = await deployHeadProfile();
+      const profile = {
+        userId: 0,
+        userType: 1,
+        userAddress: owner.address,
+        displayName: "Bevis Lin",
+        email: "bevis.tw@gmail.com",
+        isEmailVerified: false,
+        lastUpdate: "1655445559",
+        emailVerifyNumber: 0,
+      };
+      //console.log(profile);
+      await contract.createProfile(profile);
+      await expect(contract.requestEmailVerificationCode())
+        .to.emit(contract, "EmailVerificationRequested")
+        .withArgs(owner.address, profile.email);
+    })
   });
 });

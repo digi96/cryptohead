@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract HeadProfile {
+contract HeadProfile is Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _userIdCounter;
     enum HeadType {
@@ -32,6 +32,8 @@ contract HeadProfile {
         string email
     );
 
+    event EmailVerificationRequested(address userAddress, string email);
+
     function getSixDigitRandom() public view returns (uint) {
         return (block.timestamp + block.difficulty) % 1000000;
     }
@@ -54,9 +56,34 @@ contract HeadProfile {
         return _profile.userId;
     }
 
-    function getProfileByAddress(address _address)
+    function getProfileInfo()
         public
         view
+        returns (
+            uint256 userId,
+            HeadType headType,
+            string memory displayName,
+            string memory email,
+            bool isEmailVerified
+        )
+    {
+        ProfileInfo memory user = users[msg.sender];
+        if (user.userId == 0) {
+            revert("Profile not exist");
+        }
+        return (
+            user.userId,
+            user.userType,
+            user.displayName,
+            user.email,
+            user.isEmailVerified
+        );
+    }
+
+    function getProfileInfoByAddress(address _address)
+        public
+        view
+        onlyOwner
         returns (
             uint256 userId,
             HeadType headType,
@@ -76,5 +103,17 @@ contract HeadProfile {
             user.email,
             user.isEmailVerified
         );
+    }
+
+    function requestEmailVerificationCode() public {
+        ProfileInfo memory user = users[msg.sender];
+        if (user.userId == 0) {
+            revert("Profile not exist");
+        }
+
+        user.emailVerifyNumber = getSixDigitRandom();
+        users[msg.sender] = user;
+
+        emit EmailVerificationRequested(msg.sender, user.email);
     }
 }
