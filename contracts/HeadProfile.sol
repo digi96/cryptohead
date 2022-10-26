@@ -89,7 +89,8 @@ contract HeadProfile is Ownable {
             HeadType headType,
             string memory displayName,
             string memory email,
-            bool isEmailVerified
+            bool isEmailVerified,
+            uint emailVerifyNumber
         )
     {
         ProfileInfo memory user = users[_address];
@@ -101,7 +102,8 @@ contract HeadProfile is Ownable {
             user.userType,
             user.displayName,
             user.email,
-            user.isEmailVerified
+            user.isEmailVerified,
+            user.emailVerifyNumber
         );
     }
 
@@ -115,5 +117,20 @@ contract HeadProfile is Ownable {
         users[msg.sender] = user;
 
         emit EmailVerificationRequested(msg.sender, user.email);
+    }
+
+    function verifyEmail(uint verificationCode) public {
+        ProfileInfo memory user = users[msg.sender];
+        if (user.userId == 0) {
+            revert("Profile not exist");
+        }
+
+        if (user.emailVerifyNumber != verificationCode) {
+            revert("Incorrect verification code");
+        } else {
+            user.isEmailVerified = true;
+            user.emailVerifyNumber = 0;
+            users[msg.sender] = user;
+        }
     }
 }
