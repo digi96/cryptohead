@@ -13,7 +13,7 @@ async function main() {
   // await lock.deployed();
 
   // console.log(`Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`);
-  
+
   const HeadProfile = await ethers.getContractFactory("HeadProfile");
   const headProfile = await HeadProfile.deploy();
   await headProfile.deployed();

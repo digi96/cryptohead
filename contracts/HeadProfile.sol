@@ -42,6 +42,11 @@ contract HeadProfile is Ownable {
         public
         returns (uint256)
     {
+        ProfileInfo memory checkProfile = users[msg.sender];
+        if (checkProfile.userId != 0) {
+            revert("Profile already exists");
+        }
+
         _userIdCounter.increment();
         _profile.userId = _userIdCounter.current();
         _profile.lastUpdate = block.timestamp;
