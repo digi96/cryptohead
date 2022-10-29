@@ -35,7 +35,12 @@ contract HeadProfile is Ownable {
     event EmailVerificationRequested(address userAddress, string email);
 
     function getSixDigitRandom() public view returns (uint) {
-        return (block.timestamp + block.difficulty) % 1000000;
+        uint tempResult = (block.timestamp + block.difficulty) % 1000000;
+        if (tempResult < 100000) {
+            return (1000000 - tempResult);
+        } else {
+            return tempResult;
+        }
     }
 
     function createProfile(ProfileInfo memory _profile)
