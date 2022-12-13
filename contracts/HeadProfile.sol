@@ -43,10 +43,9 @@ contract HeadProfile is Ownable {
         }
     }
 
-    function createProfile(ProfileInfo memory _profile)
-        public
-        returns (uint256)
-    {
+    function createProfile(
+        ProfileInfo memory _profile
+    ) public returns (uint256) {
         ProfileInfo memory checkProfile = users[msg.sender];
         if (checkProfile.userId != 0) {
             revert("Profile already exists");
@@ -55,6 +54,7 @@ contract HeadProfile is Ownable {
         _userIdCounter.increment();
         _profile.userId = _userIdCounter.current();
         _profile.lastUpdate = block.timestamp;
+        _profile.userAddress = payable(msg.sender);
         users[msg.sender] = _profile;
 
         emit ProfileCreated(
@@ -90,7 +90,9 @@ contract HeadProfile is Ownable {
         );
     }
 
-    function getProfileInfoByAddress(address _address)
+    function getProfileInfoByAddress(
+        address _address
+    )
         public
         view
         onlyOwner
