@@ -12,6 +12,7 @@ contract HeadTemplate is Ownable {
         uint256 templateId;
         string title;
         string description;
+        string imageURL;
         uint256 quantity;
         uint256 issued;
         address payable owner;
@@ -23,6 +24,7 @@ contract HeadTemplate is Ownable {
         uint256 indexed templateId,
         string title,
         string description,
+        string imageURL,
         uint256 quantity,
         address payable owner
     );
@@ -41,13 +43,16 @@ contract HeadTemplate is Ownable {
             _template.templateId,
             _template.title,
             _template.description,
+            _template.imageURL,
             _template.quantity,
             _template.owner
         );
         return _template.templateId;
     }
 
-    function getUserTemplatesCount(address ownerAddress) public view returns (uint256) {
+    function getUserTemplatesCount(
+        address ownerAddress
+    ) public view returns (uint256) {
         return userTemplates[ownerAddress].length;
     }
 }

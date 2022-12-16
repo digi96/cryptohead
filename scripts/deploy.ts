@@ -17,6 +17,10 @@ async function main() {
   const HeadProfile = await ethers.getContractFactory("HeadProfile");
   const headProfile = await HeadProfile.deploy();
   await headProfile.deployed();
+
+  const HeadTemplate = await ethers.getContractFactory("HeadTemplate");
+  const headTemplate = await HeadTemplate.deploy();
+  await headTemplate.deployed();
 }
 
 // We recommend this pattern to be able to use async/await everywhere
